@@ -5,15 +5,22 @@ from scipy import signal
 
 
 class Slice:
-    def __init__(self, corner1, corner2):
-        self.corner1 = corner1
-        self.corner2 = corner2
+    def __init__(self, matrix, corner1):
+        self.top_left = corner1
+        self.bottom_right = (corner1[0] + matrix.shape[0] - 1,
+                             corner1[1] + matrix.shape[1] - 1)
 
     def area(self):
-        return (self.corner1[0] - self.corner1[1]) * (self.corner2[0] - self.corner2[1])
+        return (self.top_left[0] - self.top_left[1]) * (self.bottom_right[0] - self.bottom_right[1])
+
+    def overlap(self, other):
+        return self.top_left[0] < other.bottom_right[0] \
+            and self.bottom_right[0] > other.top_left[0] \
+            and self.top_left[1] < other.bottom_right[1] \
+            and self.bottom_right[1] > other.top_left[1]
 
     def __repr__(self):
-        return " ".join([str(self.corner1[0]), str(self.corner2[0]), str(self.corner1[1]), str(self.corner2[1])])
+        return " ".join([str(self.top_left[0]), str(self.bottom_right[0]), str(self.top_left[1]), str(self.bottom_right[1])])
 
 
 class Solver:
@@ -34,16 +41,15 @@ class Solver:
                 self.pizza[i][j] = self.db[pizza[i][j]]
 
     def solve(self):
-        matrices = self.populates_slices()
+        slices = self.populates_slices()
         print(self.pizza)
-        mat = matrices[2]
-        print(mat)
 
-        #max_peak = np.prod(mat.shape)
-        #c = signal.fftconvolve(self.pizza, np.fliplr(np.flipud(mat)), 'valid')
-        #overlaps = np.where(c == max_peak)
-        dd = np.where(self.pizza == mat)
-        print(dd)
+        for s in slices:
+            for ss in slices:
+                print(s)
+                print(ss)
+                print(s.overlap(ss))
+                break
 
     def evaluate(self, matrix):
         shape = matrix.shape
@@ -73,7 +79,7 @@ class Solver:
             else:
                 already_in = False
                 for matmat in all_step_uniq:
-                    if np.array_equal(matmat, mat):
+                    if np.array_equal(matmat[0], mat[0]) and matmat[1][0] == mat[1][0] and matmat[1][1] == mat[1][1]:
                         already_in = True
                         break
                 if not already_in:
@@ -81,8 +87,8 @@ class Solver:
 
         valuable_slices = []
         for mat in all_step_uniq:
-            if self.evaluate(mat) > 0:
-                valuable_slices.append(mat)
+            if self.evaluate(mat[0]) > 0:
+                valuable_slices.append(Slice(mat[0], mat[1]))
 
         return valuable_slices
 
@@ -94,17 +100,17 @@ class Solver:
         for i in range(shape[0]):
             for j in range(shape[1]):
                 mat = matrix[np.ix_(range(step, i + 1), range(j + 1))]
-                list_step.append(mat)
+                list_step.append((mat, (step, 0)))
 
         for i in range(shape[0]):
             for j in range(shape[1]):
                 mat = matrix[np.ix_(range(i + 1), range(step, j + 1))]
-                list_step.append(mat)
+                list_step.append((mat, (0, step)))
 
         for i in range(shape[0]):
             for j in range(shape[1]):
                 mat = matrix[np.ix_(range(step, i + 1), range(step, j + 1))]
-                list_step.append(mat)
+                list_step.append((mat, (step, step)))
 
         return list_step
 
@@ -114,14 +120,9 @@ def get_answer(path):
     solver = Solver(all_lines[0], all_lines[1:len(all_lines)])
     solver.solve()
 
-    li = []
-    li.append(Slice((0, 2), (0, 1)))
-    li.append(Slice((0, 2), (2, 2)))
-    li.append(Slice((0, 2), (3, 4)))
-    answer = str(len(li)) + "\r"
-    for s in li:
+    answer = str(len([])) + "\r"
+    for s in []:
         answer += str(s) + "\r"
-
     return answer
 
 
