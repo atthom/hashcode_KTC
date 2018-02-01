@@ -77,7 +77,14 @@ class Solver:
         b = slices[21]
         c = slices[26]
         a2 = slices[0]
+        # print(a.overlap(a2))
 
+        # print(a.overlap(b))
+       # print(a.overlap(c))
+        # print(b.overlap(c))
+        # print(b.overlap(a))
+        # print(c.overlap(a))
+        # print(c.overlap(b))
         good = [a, b, c]
         dd = [self.evaluate(f.matrix) for f in good]
 
@@ -98,7 +105,6 @@ class Solver:
                   for cutting in all_cuttings]
         index = values.index(max(values))
         selected = all_cuttings[index]
-
         answer = str(len(selected)) + "\r"
         for slic in selected:
             answer += str(slic) + "\r"
