@@ -7,8 +7,11 @@ from subprocess import check_output
 
 input_files = [f for f in listdir(".") if isfile(join(".", f)) and ".in" in f]
 
+input_files = ['example.in', 'small.in']
+
 for file in input_files:
     with open(file.replace(".in", ".out"), "w+") as f:
+        print(file, "...")
         f.write(check_output(["python", "pizza.py", file]).decode("utf-8"))
 
 
