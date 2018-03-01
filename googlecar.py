@@ -18,7 +18,7 @@ class Vehicles:
 
     def canAccept(self, ride, max_steps):
         steps = self.totalTimeToRide(ride)
-        return self.used_steps + steps < max_steps
+        return self.used_steps + steps < max_steps and steps < ride.finish
 
     def hasBonus(self, ride):
         return self.used_steps + self.position.distance(ride.depart) <= ride.start
