@@ -36,17 +36,19 @@ class Ride:
         self.arrive = arrive
         self.start = start
         self.finish = finish
+        self.value = finish - start
 
     def time_to_ride(self):
         return self.depart.distance(self.arrive)
 
 
 class Solver:
-    def __init__(self, shape, nb_steps, vehicles, rides):
+    def __init__(self, shape, nb_steps, vehicles, rides, bonus):
         self.shape = shape
         self.vehicles = vehicles
         self.nb_steps = nb_steps
         self.rides = rides
+        self.bonus = bonus
 
     def solve(self):
         for ride in self.rides:
@@ -65,7 +67,7 @@ class Solver:
 def parser(filename):
     my_file = open(filename)
     lines = my_file.readlines()
-    sim_info = lines[0].split()
+    sim_info = list(map(int, lines[0].split()))
     i = 1
     rides_nb = len(lines) - 1
     rides = [None] * rides_nb
@@ -81,7 +83,7 @@ def parser(filename):
         vehicles.append(Vehicles())
 
     return Solver(Coordinates(sim_info[0], sim_info[1]),
-                  int(sim_info[5]), vehicles, rides)
+                  sim_info[5], vehicles, rides, sim_info[4])
 
 
 def answer(vehicles):
