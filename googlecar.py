@@ -22,7 +22,7 @@ class Vehicles:
 
     def hasBonus(self, ride):
         #pos, ride.depart
-        return self.used_steps + self.position.distance(ride) <= ride.start
+        return self.used_steps + self.position.distance(ride.depart) <= ride.start
 
     def addRide(self, ride):
         self.rides.append(ride)
@@ -67,7 +67,7 @@ class Solver:
                     v.addRide(ride)
                     took = True
                     break
-                elif v.canAccept(v):
+                elif v.canAccept(ride, self.nb_steps):
                     fail_safe = v
 
             if not took:
