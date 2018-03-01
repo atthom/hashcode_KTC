@@ -15,19 +15,27 @@ class Vehicles:
         self.position = Coordinates(0, 0)
         self.rides = []
 
-    def canAccept(self, ride):
+    def canAccept(self, ride, max_steps):
+        if not ride:
+            True
         steps = Coordinates(0, 0).distance(self.rides[0].depart)
-        steps += ride.depart.distance(ride.arrive)
+        steps += ride[0].time_to_ride()
 
-        # for ride in rides[1:]:
-        #    steps +=
+        if len(ride) > 1:
+            for i in range(1, len(self.rides)):
+                steps += ride[i - 1].arrive.distance(ride[1].depart)
+                steps += ride[i].time_to_ride()
+
+        steps += ride[-1].arrive.distance(ride.depart)
+        steps += ride.time_to_ride()
+        return steps < max_steps
 
     def addRide(self, ride):
         self.rides.append(ride)
         self.position = ride.arrive
 
     def totalTimeToRide(self, ride):
-        return self.position.distance(ride.depart) + ride.depart.distance(ride.arrive)
+        return self.position.distance(ride.depart) + ride.time_to_ride()
 
 
 class Ride:
@@ -37,6 +45,9 @@ class Ride:
         self.arrive = arrive
         self.start = start
         self.finish = finish
+
+    def time_to_ride():
+        return self.depart.distance(self.arrive)
 
 
 class Solver:
