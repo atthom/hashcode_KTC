@@ -20,6 +20,10 @@ class Vehicles:
         steps = self.totalTimeToRide(ride)
         return self.used_steps + steps < max_steps
 
+    def hasBonus(self, ride):
+        #pos, ride.depart
+        return self.used_steps + self.position.distance(ride) <= ride.start
+
     def addRide(self, ride):
         self.rides.append(ride)
         self.position = ride.arrive
@@ -50,15 +54,23 @@ class Solver:
 
     def solve(self):
         for ride in self.rides:
-            times_to_ride = []
-            for v in self.vehicles:
-                times_to_ride.append((v, v.totalTimeToRide(ride)))
+            times_to_ride = [(v, v.totalTimeToRide(ride))
+                             for v in self.vehicles]
 
             ss = sorted(times_to_ride, key=lambda t: t[1])
+
+            took = False
             for v, time in ss:
-                if v.canAccept(ride, self.nb_steps):
+                if v.hasBonus(ride):
                     v.addRide(ride)
+                    took = True
                     break
+                elif v.canAccept(v):
+                    fail_safe = v
+
+            if not took:
+                fail_safe.addRide(ride)
+
         return self.vehicles
 
 

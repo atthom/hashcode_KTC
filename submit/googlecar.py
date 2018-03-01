@@ -50,9 +50,8 @@ class Solver:
 
     def solve(self):
         for ride in self.rides:
-            times_to_ride = []
-            for v in self.vehicles:
-                times_to_ride.append((v, v.totalTimeToRide(ride)))
+            times_to_ride = [(v, v.totalTimeToRide(ride))
+                             for v in self.vehicles]
 
             ss = sorted(times_to_ride, key=lambda t: t[1])
             for v, time in ss:
