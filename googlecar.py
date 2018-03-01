@@ -84,7 +84,7 @@ def answer(vehicles):
     for v in vehicles:
         final_answer += "\r" + str(len(v.rides))
         for r in v.rides:
-            final_answer += " " + r.id
+            final_answer += " " + str(r.id)
     return final_answer
 
 
