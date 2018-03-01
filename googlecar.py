@@ -13,26 +13,18 @@ class Coordinates:
 class Vehicles:
     def __init__(self):
         self.position = Coordinates(0, 0)
+        self.used_steps = 0
         self.rides = []
 
     def canAccept(self, ride, max_steps):
-        if not ride:
-            True
-        steps = Coordinates(0, 0).distance(self.rides[0].depart)
-        steps += ride[0].time_to_ride()
+        steps = self.totalTimeToRide(ride)
 
-        if len(ride) > 1:
-            for i in range(1, len(self.rides)):
-                steps += ride[i - 1].arrive.distance(ride[1].depart)
-                steps += ride[i].time_to_ride()
-
-        steps += ride[-1].arrive.distance(ride.depart)
-        steps += ride.time_to_ride()
-        return steps < max_steps
+        return self.used_steps + steps < max_steps
 
     def addRide(self, ride):
         self.rides.append(ride)
         self.position = ride.arrive
+        self.used_steps += self.totalTimeToRide(ride)
 
     def totalTimeToRide(self, ride):
         return self.position.distance(ride.depart) + ride.time_to_ride()
@@ -46,7 +38,7 @@ class Ride:
         self.start = start
         self.finish = finish
 
-    def time_to_ride():
+    def time_to_ride(self):
         return self.depart.distance(self.arrive)
 
 
