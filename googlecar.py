@@ -56,7 +56,7 @@ class Solver:
 
             ss = sorted(times_to_ride, key=lambda t: t[1])
             for v, time in ss:
-                if v.canAccept(ride):
+                if v.canAccept(ride, self.nb_steps):
                     v.addRide(ride)
                     break
         return self.vehicles
@@ -70,7 +70,7 @@ def parser(filename):
     rides_nb = len(lines) - 1
     rides = [None] * rides_nb
     while i < rides_nb + 1:
-        ride_info = map(int, lines[i].split())
+        ride_info = list(map(int, lines[i].split()))
         rides[i - 1] = Ride(i - 1, Coordinates(ride_info[0], ride_info[1]),
                             Coordinates(ride_info[2], ride_info[3]),
                             ride_info[4], ride_info[5])
@@ -81,13 +81,18 @@ def parser(filename):
         vehicles.append(Vehicles())
 
     return Solver(Coordinates(sim_info[0], sim_info[1]),
-                  sim_info[5], vehicles, rides)
+                  int(sim_info[5]), vehicles, rides)
 
 
 def answer(vehicles):
     final_answer = ""
+    begin = True
     for v in vehicles:
-        final_answer += "\r" + str(len(v.rides))
+        if begin:
+            final_answer += str(len(v.rides))
+            begin = False
+        else:
+            final_answer += "\r" + str(len(v.rides))
         for r in v.rides:
             final_answer += " " + str(r.id)
     return final_answer
