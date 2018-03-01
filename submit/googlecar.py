@@ -21,7 +21,6 @@ class Vehicles:
         return self.used_steps + steps < max_steps
 
     def hasBonus(self, ride):
-        #pos, ride.depart
         return self.used_steps + self.position.distance(ride.depart) <= ride.start
 
     def addRide(self, ride):
@@ -30,7 +29,9 @@ class Vehicles:
         self.used_steps += self.totalTimeToRide(ride)
 
     def totalTimeToRide(self, ride):
-        return self.position.distance(ride.depart) + ride.time_to_ride()
+        arrival_time = self.used_steps + self.position.distance(ride.depart)
+        waiting_time = ride.start - arrival_time if ride.start > arrival_time else 0
+        return arrival_time + waiting_time + ride.time_to_ride()
 
     def closest(self, ride):
         return self.position.distance(ride.depart)
@@ -59,29 +60,22 @@ class Solver:
 
     def solve(self):
         for ride in self.rides:
-            times_to_ride = [(v, v.totalTimeToRide(ride))
-                             for v in self.vehicles]
+            times_to_ride = []
+            for v in self.vehicles:
+                times_to_ride.append((v, v.totalTimeToRide(ride)))
 
             ss = sorted(times_to_ride, key=lambda t: t[1])
-
-            took = False
             for v, time in ss:
-                if v.hasBonus(ride):
+                if v.canAccept(ride, self.nb_steps):
                     v.addRide(ride)
-                    took = True
                     break
-                elif v.canAccept(ride, self.nb_steps):
-                    fail_safe = v
-
-            if not took:
-                fail_safe.addRide(ride)
-
         return self.vehicles
 
     def solveOther(self):
-        longest_ride = sorted([(r, r.time_to_ride()) for r in self.rides])
+        longest_ride = sorted([(r, r.time_to_ride())
+                               for r in self.rides], key=lambda t: t[1])
 
-        for ride in reversed(longest_ride):
+        for ride, time in reversed(longest_ride):
             times_to_ride = [(v, v.totalTimeToRide(ride))
                              for v in self.vehicles]
 
@@ -157,4 +151,4 @@ def answer(vehicles):
 
 if __name__ == '__main__':
     solver = parser(sys.argv[1])
-    print(answer(solver.solve()))
+    print(answer(solver.solveOther()))
