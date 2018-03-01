@@ -82,6 +82,7 @@ class Solver:
             ss = sorted(times_to_ride, key=lambda t: t[1])
 
             took = False
+            fail_safe = None
             for v, time in ss:
                 if v.hasBonus(ride):
                     v.addRide(ride)
@@ -90,7 +91,7 @@ class Solver:
                 elif v.canAccept(ride, self.nb_steps):
                     fail_safe = v
 
-            if not took:
+            if not took and fail_safe:
                 fail_safe.addRide(ride)
 
         return self.vehicles
@@ -109,8 +110,8 @@ class Solver:
                 elif v.canAccept(r, self.nb_steps):
                     fail_safe = v
 
-            if not took:
-                fail_safe.addRide(ride)
+            if not took and fail_safe:
+                fail_safe.addRide(r)
 
 
 def parser(filename):
