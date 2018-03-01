@@ -52,7 +52,6 @@ class Solver:
         for ride in self.rides:
             times_to_ride = []
             for v in self.vehicles:
-                v = Vehicles()
                 times_to_ride.append((v, v.totalTimeToRide(ride)))
 
             ss = sorted(times_to_ride, key=lambda t: t[1])
@@ -72,9 +71,9 @@ def parser(filename):
     rides = [None] * rides_nb
     while i < rides_nb + 1:
         ride_info = lines[i]
-        rides[i - 1] = Ride(i - 1, Coordinates(ride_info[0], ride_info[1]),
-                            Coordinates(ride_info[2], ride_info[3]),
-                            ride_info[4], ride_info[5])
+        rides[i - 1] = Ride(i - 1, Coordinates(int(ride_info[0]), int(ride_info[1])),
+                            Coordinates(int(ride_info[2]), int(ride_info[3])),
+                            int(ride_info[4]), int(ride_info[5]))
         i += 1
 
     vehicles = []
