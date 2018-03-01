@@ -65,10 +65,10 @@ def parser(filename):
     rides_nb = len(lines) - 1
     rides = [None] * rides_nb
     while i < rides_nb + 1:
-        ride_info = lines[i]
-        rides[i - 1] = Ride(i - 1, Coordinates(int(ride_info[0]), int(ride_info[1])),
-                            Coordinates(int(ride_info[2]), int(ride_info[3])),
-                            int(ride_info[4]), int(ride_info[5]))
+        ride_info = map(int, lines[i].split())
+        rides[i - 1] = Ride(i - 1, Coordinates(ride_info[0], ride_info[1]),
+                            Coordinates(ride_info[2], ride_info[3]),
+                            ride_info[4], ride_info[5])
         i += 1
 
     vehicles = []
