@@ -54,7 +54,12 @@ class Solver:
             for v in self.vehicles:
                 v = Vehicles()
                 times_to_ride.append((v, v.totalTimeToRide(ride)))
-            min(times_to_ride,  key=lambda t: t[1])[0].addRide(ride)
+
+            ss = sorted(times_to_ride, key=lambda t: t[1])
+            for v, time in ss:
+                if v.canAccept(ride):
+                    v.addRide(ride)
+                    break
         return self.vehicles
 
 
