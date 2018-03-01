@@ -1,6 +1,6 @@
 import shutil
 from os import listdir, mkdir
-from os.path import isfile, join
+from os.path import isfile, join, exists
 from subprocess import check_output
 
 input_files = [f for f in listdir(".") if isfile(join(".", f)) and ".in" in f]
@@ -12,7 +12,7 @@ for file in input_files:
         f.write(check_output(
             ["python", "pizza_answer_example.py", file]).decode("utf-8"))
 
-if os.path.exists("./submit"):
+if exists("./submit"):
     shutil.rmtree("./submit")
 
 mkdir("./submit")
