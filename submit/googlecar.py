@@ -32,6 +32,9 @@ class Vehicles:
     def totalTimeToRide(self, ride):
         return self.position.distance(ride.depart) + ride.time_to_ride()
 
+    def closest(self, ride):
+        return self.position.distance(ride.depart)
+
 
 class Ride:
     def __init__(self, id, depart, arrive, start, finish):
@@ -74,6 +77,46 @@ class Solver:
                 fail_safe.addRide(ride)
 
         return self.vehicles
+
+    def solveOther(self):
+        longest_ride = sorted([(r, r.time_to_ride()) for r in self.rides])
+
+        for ride in reversed(longest_ride):
+            times_to_ride = [(v, v.totalTimeToRide(ride))
+                             for v in self.vehicles]
+
+            ss = sorted(times_to_ride, key=lambda t: t[1])
+
+            took = False
+            for v, time in ss:
+                if v.hasBonus(ride):
+                    v.addRide(ride)
+                    took = True
+                    break
+                elif v.canAccept(ride, self.nb_steps):
+                    fail_safe = v
+
+            if not took:
+                fail_safe.addRide(ride)
+
+        return self.vehicles
+
+    def solve_vehicles(self):
+        for v in self.vehicles:
+            times_to_ride = [(r, v.totalTimeToRide(r)) for r in self.rides]
+            ss = sorted(times_to_ride, key=lambda t: t[1])
+
+            took = False
+            for r, time in ss:
+                if v.hasBonus(r):
+                    v.addRide(r)
+                    took = True
+                    break
+                elif v.canAccept(r, self.nb_steps):
+                    fail_safe = v
+
+            if not took:
+                fail_safe.addRide(ride)
 
 
 def parser(filename):
