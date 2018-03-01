@@ -52,6 +52,7 @@ class Solver:
         for ride in self.rides:
             times_to_ride = []
             for v in self.vehicles:
+                v = Vehicles()
                 times_to_ride.append((v, v.totalTimeToRide(ride)))
             min(times_to_ride,  key=lambda t: t[1])[0].addRide(ride)
         return self.vehicles
@@ -71,17 +72,21 @@ def parser(filename):
                             ride_info[4], ride_info[5])
         i += 1
 
+    vehicles = []
+    for i in range(0, int(sim_info[2])):
+        vehicles.append(Vehicles())
+
     return Solver(Coordinates(sim_info[0], sim_info[1]),
-                  sim_info[5], [Vehicles] * int(sim_info[2]), rides)
+                  sim_info[5], vehicles, rides)
 
 
 def answer(vehicles):
-    answer = ""
+    final_answer = ""
     for v in vehicles:
-        answer += "\r" + len(v.rides)
+        final_answer += "\r" + str(len(v.rides))
         for r in v.rides:
-            answer += " " + r.id
-    return answer
+            final_answer += " " + r.id
+    return final_answer
 
 
 if __name__ == '__main__':
